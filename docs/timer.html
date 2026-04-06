@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>PeakPulse — Tasks</title>
+  <title>PeakPulse — Study Timer</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,12 +38,12 @@
 
       <div class="nav-links" id="nav-links" role="menu">
         <a href="/"
-           class="nav-link active"
+           class="nav-link "
            role="menuitem" id="nav-tasks">
           <span class="nav-icon">🎯</span> Tasks
         </a>
         <a href="/timer"
-           class="nav-link "
+           class="nav-link active"
            role="menuitem" id="nav-timer">
           <span class="nav-icon">⏱️</span> Timer
         </a>
@@ -68,90 +68,59 @@
   <main class="main-content" id="main-content">
     
 <div class="page-header">
-  <h1>🎯 My Tasks</h1>
-  <p class="page-subtitle">Stay on track or face the consequences!</p>
+  <h1>⏱️ Study Timer</h1>
+  <p class="page-subtitle">Focus. Study. Conquer.</p>
 </div>
 
-<!-- ─── Add Task Form ─────────────────────────────────────────── -->
-<div class="add-task-form" id="add-task-form">
-  <h3>➕ New Task</h3>
-  <form action="/add" method="POST" id="task-form">
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="task-title">Task Title</label>
-        <input type="text" id="task-title" name="title" class="form-input"
-               placeholder="e.g., Finish math homework" required
-               autocomplete="off" maxlength="200">
-      </div>
-      <div class="form-group">
-        <label for="task-deadline">Deadline</label>
-        <input type="datetime-local" id="task-deadline" name="deadline"
-               class="form-input" required>
-      </div>
-      <div class="form-group">
-        <button type="submit" class="btn btn-primary" id="add-task-btn">
-          🚀 Add Task
-        </button>
-      </div>
+<div class="timer-container" id="timer-container">
+  <!-- Timer Display -->
+  <div class="timer-display" id="timer-display">
+    <div class="timer-glow"></div>
+    <div class="timer-ring"></div>
+    <div class="timer-ring-progress" id="timer-ring-progress"></div>
+    <span class="timer-time" id="timer-time">25:00</span>
+  </div>
+
+  <!-- Preset Buttons -->
+  <div class="timer-presets" id="timer-presets">
+    <button class="preset-btn" data-minutes="15" id="preset-15">15 min</button>
+    <button class="preset-btn active" data-minutes="25" id="preset-25">25 min</button>
+    <button class="preset-btn" data-minutes="45" id="preset-45">45 min</button>
+    <button class="preset-btn" data-minutes="60" id="preset-60">60 min</button>
+    <button class="preset-btn" data-minutes="90" id="preset-90">90 min</button>
+  </div>
+
+  <!-- Controls -->
+  <div class="timer-controls" id="timer-controls">
+    <button class="timer-btn timer-btn-start" id="timer-start">
+      ▶️ Start
+    </button>
+    <button class="timer-btn timer-btn-pause" id="timer-pause" style="display:none;">
+      ⏸️ Pause
+    </button>
+    <button class="timer-btn timer-btn-reset" id="timer-reset">
+      🔄 Reset
+    </button>
+  </div>
+
+  <!-- Task Selector -->
+  <div class="timer-task-select">
+    <label for="timer-task">Link to Task (optional)</label>
+    <select id="timer-task" name="task_id">
+      <option value="">— Free Study —</option>
+      
+    </select>
+  </div>
+
+  <!-- Today's Stats -->
+  <div class="timer-today-stats" id="timer-today-stats">
+    <div class="stat-label">Today's Total Study Time</div>
+    <div class="stat-value" id="today-total">
+      
+      
+      0m
     </div>
-  </form>
-</div>
-
-<!-- ─── Filter Tabs ───────────────────────────────────────────── -->
-<div class="filter-tabs" id="filter-tabs" role="tablist">
-  <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true" id="filter-all">
-    All <span class="tab-count" id="count-all">1</span>
-  </button>
-  <button class="filter-tab" data-filter="pending" role="tab" id="filter-pending">
-    ⏳ Pending <span class="tab-count" id="count-pending">0</span>
-  </button>
-  <button class="filter-tab" data-filter="completed" role="tab" id="filter-completed">
-    ✅ Done <span class="tab-count" id="count-completed">1</span>
-  </button>
-  <button class="filter-tab" data-filter="missed" role="tab" id="filter-missed">
-    😤 Missed <span class="tab-count" id="count-missed">0</span>
-  </button>
-</div>
-
-<!-- ─── Task List ─────────────────────────────────────────────── -->
-<div class="task-list" id="task-list">
-  
-    
-      <div class="task-card status-completed" data-status="completed" id="task-1">
-        <div class="task-header">
-          <div>
-            <div class="task-title">python</div>
-            <div class="task-meta">
-              <span class="task-meta-item">
-                📅 <time class="local-time" datetime="2026-04-07T18:29:00Z">Apr 07, 2026 at 06:29 PM UTC</time>
-              </span>
-              
-                <span class="task-meta-item">
-                  ✅ <time class="local-time" datetime="2026-04-06T11:51:58Z">Apr 06 at 11:51 AM UTC</time>
-                </span>
-              
-            </div>
-          </div>
-          <span class="task-status completed">
-            ✅ Done
-            
-          </span>
-        </div>
-
-        
-
-        <div class="task-actions">
-          
-          <form action="/delete/1" method="POST" style="display:inline;"
-                onsubmit="return confirm('Delete this task?');">
-            <button type="submit" class="btn btn-danger btn-sm" id="delete-1">
-              🗑️ Delete
-            </button>
-          </form>
-        </div>
-      </div>
-    
-  
+  </div>
 </div>
 
   </main>
@@ -196,7 +165,7 @@
   </script>
 
   
-<script src="/static/js/app.js"></script>
+<script src="/static/js/timer.js"></script>
 
 </body>
 </html>
