@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}PeakPulse — Tasks{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>🎯 My Tasks</h1>
+  <p class="page-subtitle">Stay on track or face the consequences!</p>
+</div>
+
+<!-- ─── Add Task Form ─────────────────────────────────────────── -->
+<div class="add-task-form" id="add-task-form">
+  <h3>➕ New Task</h3>
+  <form action="{{ url_for('add_task') }}" method="POST" id="task-form">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="task-title">Task Title</label>
+        <input type="text" id="task-title" name="title" class="form-input"
+               placeholder="e.g., Finish math homework" required
+               autocomplete="off" maxlength="200">
+      </div>
+      <div class="form-group">
+        <label for="task-deadline">Deadline</label>
+        <input type="datetime-local" id="task-deadline" name="deadline"
+               class="form-input" required>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" id="add-task-btn">
+          🚀 Add Task
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- ─── Filter Tabs ───────────────────────────────────────────── -->
+<div class="filter-tabs" id="filter-tabs" role="tablist">
+  <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true" id="filter-all">
+    All <span class="tab-count" id="count-all">{{ tasks|length }}</span>
+  </button>
+  <button class="filter-tab" data-filter="pending" role="tab" id="filter-pending">
+    ⏳ Pending <span class="tab-count" id="count-pending">{{ tasks|selectattr('status', 'equalto', 'pending')|list|length }}</span>
+  </button>
+  <button class="filter-tab" data-filter="completed" role="tab" id="filter-completed">
+    ✅ Done <span class="tab-count" id="count-completed">{{ tasks|selectattr('status', 'equalto', 'completed')|list|length }}</span>
+  </button>
+  <button class="filter-tab" data-filter="missed" role="tab" id="filter-missed">
+    😤 Missed <span class="tab-count" id="count-missed">{{ tasks|selectattr('status', 'equalto', 'missed')|list|length }}</span>
+  </button>
+</div>
+
+<!-- ─── Task List ─────────────────────────────────────────────── -->
+<div class="task-list" id="task-list">
+  {% if tasks %}
+    {% for task in tasks %}
+      <div class="task-card status-{{ task.status }}" data-status="{{ task.status }}" id="task-{{ task.id }}">
+        <div class="task-header">
+          <div>
+            <div class="task-title">{{ task.title }}</div>
+            <div class="task-meta">
+              <span class="task-meta-item">
+                📅 {% if task.deadline %}<time class="local-time" datetime="{{ task.deadline.strftime('%Y-%m-%dT%H:%M:%SZ') }}">{{ task.deadline.strftime('%b %d, %Y at %I:%M %p') }} UTC</time>{% else %}No deadline{% endif %}
+              </span>
+              {% if task.status == 'completed' and task.completed_at %}
+                <span class="task-meta-item">
+                  ✅ <time class="local-time" datetime="{{ task.completed_at.strftime('%Y-%m-%dT%H:%M:%SZ') }}">{{ task.completed_at.strftime('%b %d at %I:%M %p') }} UTC</time>
+                </span>
+              {% endif %}
+            </div>
+          </div>
+          <span class="task-status {{ task.status }}">
+            {% if task.status == 'pending' %}⏳ Pending
+            {% elif task.status == 'completed' %}✅ Done
+            {% else %}😤 Missed{% endif %}
+          </span>
+        </div>
+
+        {% if task.punishment %}
+          <div class="task-punishment">
+            🔥 <strong>Punishment:</strong> {{ task.punishment }}
+          </div>
+        {% endif %}
+
+        <div class="task-actions">
+          {% if task.status == 'pending' %}
+            <form action="{{ url_for('complete_task', task_id=task.id) }}" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-success btn-sm" id="complete-{{ task.id }}">
+                ✅ Complete
+              </button>
+            </form>
+          {% endif %}
+          <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" style="display:inline;"
+                onsubmit="return confirm('Delete this task?');">
+            <button type="submit" class="btn btn-danger btn-sm" id="delete-{{ task.id }}">
+              🗑️ Delete
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state" id="empty-state">
+      <span class="empty-icon">🎯</span>
+      <p>No tasks yet. Add your first task above and start crushing it!</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

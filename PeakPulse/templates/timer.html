@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}PeakPulse — Study Timer{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>⏱️ Study Timer</h1>
+  <p class="page-subtitle">Focus. Study. Conquer.</p>
+</div>
+
+<div class="timer-container" id="timer-container">
+  <!-- Timer Display -->
+  <div class="timer-display" id="timer-display">
+    <div class="timer-glow"></div>
+    <div class="timer-ring"></div>
+    <div class="timer-ring-progress" id="timer-ring-progress"></div>
+    <span class="timer-time" id="timer-time">25:00</span>
+  </div>
+
+  <!-- Preset Buttons -->
+  <div class="timer-presets" id="timer-presets">
+    <button class="preset-btn" data-minutes="15" id="preset-15">15 min</button>
+    <button class="preset-btn active" data-minutes="25" id="preset-25">25 min</button>
+    <button class="preset-btn" data-minutes="45" id="preset-45">45 min</button>
+    <button class="preset-btn" data-minutes="60" id="preset-60">60 min</button>
+    <button class="preset-btn" data-minutes="90" id="preset-90">90 min</button>
+  </div>
+
+  <!-- Controls -->
+  <div class="timer-controls" id="timer-controls">
+    <button class="timer-btn timer-btn-start" id="timer-start">
+      ▶️ Start
+    </button>
+    <button class="timer-btn timer-btn-pause" id="timer-pause" style="display:none;">
+      ⏸️ Pause
+    </button>
+    <button class="timer-btn timer-btn-reset" id="timer-reset">
+      🔄 Reset
+    </button>
+  </div>
+
+  <!-- Task Selector -->
+  <div class="timer-task-select">
+    <label for="timer-task">Link to Task (optional)</label>
+    <select id="timer-task" name="task_id">
+      <option value="">— Free Study —</option>
+      {% for task in tasks %}
+        <option value="{{ task.id }}">{{ task.title }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Today's Stats -->
+  <div class="timer-today-stats" id="timer-today-stats">
+    <div class="stat-label">Today's Total Study Time</div>
+    <div class="stat-value" id="today-total">
+      {% set hours = (total_today // 3600) %}
+      {% set minutes = ((total_today % 3600) // 60) %}
+      {% if hours > 0 %}{{ hours }}h {% endif %}{{ minutes }}m
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="PeakPulse — Gamified productivity tracker with tasks, study timer, and funny punishments.">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>{% block title %}PeakPulse{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- ─── Navigation ────────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <a href="{{ url_for('index') }}" class="nav-brand" id="nav-brand">
+        <span class="brand-icon">⚡</span>
+        <span>PeakPulse</span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links" id="nav-links" role="menu">
+        <a href="{{ url_for('index') }}"
+           class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
+           role="menuitem" id="nav-tasks">
+          <span class="nav-icon">🎯</span> Tasks
+        </a>
+        <a href="{{ url_for('timer') }}"
+           class="nav-link {% if request.endpoint == 'timer' %}active{% endif %}"
+           role="menuitem" id="nav-timer">
+          <span class="nav-icon">⏱️</span> Timer
+        </a>
+        <a href="{{ url_for('dashboard') }}"
+           class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
+           role="menuitem" id="nav-dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav Overlay -->
+  <div class="nav-overlay" id="nav-overlay"></div>
+
+  <!-- ─── Flash Messages ────────────────────────────────────────── -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container" id="flash-container">
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}" role="alert">
+            {% if category == 'success' %}✅{% elif category == 'error' %}❌{% else %}ℹ️{% endif %}
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ─── Main Content ──────────────────────────────────────────── -->
+  <main class="main-content" id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ─── Footer ────────────────────────────────────────────────── -->
+  <footer class="footer">
+    Built with <span>❤️</span> by PeakPulse &mdash; Stay productive or get punished! 😂
+  </footer>
+
+  <!-- ─── Navigation Script ─────────────────────────────────────── -->
+  <script>
+    // Hamburger menu toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    const navOverlay = document.getElementById('nav-overlay');
+
+    function toggleNav() {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('active');
+      navOverlay.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    navToggle.addEventListener('click', toggleNav);
+    navOverlay.addEventListener('click', toggleNav);
+
+    // Close nav when a link is clicked (mobile)
+    navLinks.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (navLinks.classList.contains('open')) {
+          toggleNav();
+        }
+      });
+    });
+
+    // Auto-remove flash messages
+    setTimeout(() => {
+      const fc = document.getElementById('flash-container');
+      if (fc) fc.remove();
+    }, 4000);
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

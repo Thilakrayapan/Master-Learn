@@ -1,0 +1,285 @@
+
+
+# 🏗️ 1. FULL ARCHITECTURE (PeakPulse Web → App Evolution)
+
+## 🔹 Phase 1: MVP (What YOU should build now)
+
+### 🧱 Architecture Type
+
+👉 **Monolithic Web App**
+
+### Stack:
+
+* **Frontend:** HTML + CSS + JS
+* **Backend:** Flask
+* **Database:** SQLite
+
+### Flow:
+
+```
+Browser (UI)
+   ↓
+Flask Server (Logic)
+   ↓
+SQLite Database
+```
+
+---
+
+## 🔹 Core Components
+
+### 🎯 1. Task Engine
+
+* Create tasks
+* Assign deadline
+* Track status
+
+### 😂 2. Punishment Engine
+
+* Trigger when:
+
+  * deadline passed
+  * task not completed
+* Output:
+
+  * funny message
+  * penalty
+
+---
+
+### 📊 3. Progress Engine
+
+* Count:
+
+  * total tasks
+  * completed
+  * missed
+
+---
+
+### ⏱️ 4. Timer (Basic JS)
+
+* Track study time
+* Send status to backend
+
+---
+
+## 🔹 Phase 2 (Upgrade)
+
+* Replace SQLite → PostgreSQL
+* Add Login system
+* Add REST API (Flask API)
+
+---
+
+## 🔹 Phase 3 (Scalable Architecture)
+
+👉 Move to:
+
+* Backend → FastAPI
+* Frontend → React / Next.js
+* Cache → Redis
+* Background Jobs → Celery
+
+---
+
+## 🔹 Final Architecture (Your Vision)
+
+```
+Frontend (Next.js / Flutter)
+        ↓
+API Layer (FastAPI)
+        ↓
+--------------------------------
+| Logic Services               |
+| - Task Engine               |
+| - Punishment Engine         |
+| - AI Recommendation Engine  |
+--------------------------------
+        ↓
+Database (PostgreSQL)
+        ↓
+Cache (Redis)
+```
+
+---
+
+# 🧠 2. SYSTEM DESIGN (Simple Diagram in Words)
+
+### 🟢 Input
+
+User creates tasks
+
+### 🟡 Processing
+
+* Store in DB
+* Check deadlines
+* Evaluate completion
+
+### 🔴 Output
+
+* Reward OR Punishment
+
+---
+
+# 🤖 3. AI PROMPTS (COPY–PASTE & USE)
+
+Now the most powerful part 🔥
+Use these prompts in ChatGPT or Cursor IDE
+
+---
+
+## 🧩 Prompt 1: Generate Full Flask App
+
+```
+You are a senior Python developer.
+
+Create a full Flask web application called "PeakPulse" with the following features:
+
+1. Users can:
+   - Add tasks with title and deadline
+   - View all tasks
+   - Mark tasks as completed
+
+2. System should:
+   - Automatically mark tasks as "missed" if deadline passes
+   - Trigger a "funny punishment message" when missed
+
+3. Use:
+   - Flask (no advanced frameworks)
+   - SQLite database
+   - HTML templates (Jinja2)
+   - Basic CSS styling
+
+4. Structure:
+   - app.py
+   - templates/
+   - static/
+   - models.py
+
+5. Include:
+   - Database schema
+   - CRUD operations
+   - Simple UI
+
+Write clean, beginner-friendly code with comments.
+```
+
+---
+
+## 🎨 Prompt 2: Improve UI
+
+```
+Act as a frontend developer.
+
+Improve the UI of my Flask app:
+- Make it modern and minimal
+- Add card layout for tasks
+- Add colors for:
+  - completed (green)
+  - missed (red)
+  - pending (yellow)
+- Make it responsive
+
+Use only HTML, CSS, and a little JavaScript.
+```
+
+---
+
+## 😂 Prompt 3: Advanced Punishment Engine
+
+```
+Create a Python module for a "Funny Punishment Engine".
+
+Features:
+- Random punishments
+- Different levels (easy, medium, hard)
+- Based on number of missed tasks
+
+Example outputs:
+- "Do 10 pushups"
+- "No Instagram for 2 hours"
+- "Double study tomorrow"
+
+Make it modular and reusable.
+```
+
+---
+
+## ⏱️ Prompt 4: Timer Feature
+
+```
+Add a study timer feature to my Flask app:
+
+- Start / Pause / Reset timer
+- Track time spent on task
+- Store time in database
+- Show total study time per day
+
+Use JavaScript for timer and Flask for backend.
+```
+
+---
+
+## 📊 Prompt 5: Dashboard
+
+```
+Create a dashboard page for PeakPulse:
+
+- Show:
+  - Total tasks
+  - Completed tasks
+  - Missed tasks
+- Add simple charts (using Chart.js)
+
+Keep it simple and clean.
+```
+
+---
+
+# 🛠️ 4. AI TOOLS YOU SHOULD USE
+
+### 🧠 Coding
+
+* ChatGPT → Generate logic
+* GitHub Copilot → Auto-complete
+
+### ⚡ Faster Development
+
+* Cursor IDE → Best for beginners
+
+---
+
+# ⚠️ IMPORTANT STRATEGY (REAL TALK)
+
+Don’t try to build:
+
+* ❌ AI system first
+* ❌ Full architecture
+* ❌ Mobile app
+
+Instead:
+
+👉 Build **MVP in 5–7 days**
+
+---
+
+# 🚀 FINAL ACTION PLAN
+
+### Day 1–2
+
+* Flask setup
+* Add task feature
+
+### Day 3
+
+* Mark complete
+* Show tasks
+
+### Day 4
+
+* Punishment system
+
+### Day 5
+
+* UI improvement

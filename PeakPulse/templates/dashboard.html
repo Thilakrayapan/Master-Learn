@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block title %}PeakPulse — Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>📊 Dashboard</h1>
+  <p class="page-subtitle">Your productivity at a glance.</p>
+</div>
+
+<!-- ─── Stats Cards ───────────────────────────────────────────── -->
+<div class="stats-grid" id="stats-grid">
+  <div class="stat-card total" id="stat-total">
+    <span class="stat-icon">📋</span>
+    <div class="stat-number" id="stat-total-num">—</div>
+    <div class="stat-label">Total Tasks</div>
+  </div>
+  <div class="stat-card completed" id="stat-completed">
+    <span class="stat-icon">✅</span>
+    <div class="stat-number" id="stat-completed-num">—</div>
+    <div class="stat-label">Completed</div>
+  </div>
+  <div class="stat-card missed" id="stat-missed">
+    <span class="stat-icon">😤</span>
+    <div class="stat-number" id="stat-missed-num">—</div>
+    <div class="stat-label">Missed</div>
+  </div>
+  <div class="stat-card rate" id="stat-rate">
+    <span class="stat-icon">🏆</span>
+    <div class="stat-number" id="stat-rate-num">—</div>
+    <div class="stat-label">Success Rate</div>
+  </div>
+</div>
+
+<!-- ─── Charts ────────────────────────────────────────────────── -->
+<div class="charts-grid" id="charts-grid">
+  <div class="chart-section">
+    <div class="chart-card">
+      <h3>🍩 Task Breakdown</h3>
+      <div class="chart-wrapper">
+        <canvas id="doughnut-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="chart-card">
+      <h3>📚 Study Time (This Week)</h3>
+      <div class="chart-wrapper">
+        <canvas id="bar-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="chart-card">
+      <h3>📈 Completions (This Week)</h3>
+      <div class="chart-wrapper">
+        <canvas id="line-chart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Recent Punishments ────────────────────────────────────── -->
+<div class="punishment-log" id="punishment-log">
+  <h3>🔥 Recent Punishments</h3>
+  <div id="punishment-list">
+    <div class="empty-state">
+      <span class="empty-icon">😇</span>
+      <p>No punishments yet. Keep it up!</p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // ─── Dashboard Data Fetching ──────────────────────────────────
+  const chartColors = {
+    violet: '#8b5cf6',
+    emerald: '#34d399',
+    rose: '#f43f5e',
+    amber: '#fbbf24',
+    cyan: '#22d3ee',
+    blue: '#3b82f6',
+  };
+
+  // Chart.js global defaults for dark theme
+  Chart.defaults.color = '#8a8a9a';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+  Chart.defaults.font.family = 'Inter, sans-serif';
+
+  let doughnutChart, barChart, lineChart;
+
+  async function loadDashboard() {
+    try {
+      const res = await fetch('/api/stats');
+      const data = await res.json();
+
+      // Update stat cards
+      document.getElementById('stat-total-num').textContent = data.total;
+      document.getElementById('stat-completed-num').textContent = data.completed;
+      document.getElementById('stat-missed-num').textContent = data.missed;
+      document.getElementById('stat-rate-num').textContent = data.rate + '%';
+
+      // Doughnut Chart
+      const dCtx = document.getElementById('doughnut-chart').getContext('2d');
+      if (doughnutChart) doughnutChart.destroy();
+      doughnutChart = new Chart(dCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Completed', 'Pending', 'Missed'],
+          datasets: [{
+            data: [data.completed, data.pending, data.missed],
+            backgroundColor: [chartColors.emerald, chartColors.amber, chartColors.rose],
+            borderWidth: 0,
+            spacing: 3,
+            borderRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: window.innerWidth < 768 ? 'bottom' : 'right',
+              labels: {
+                padding: 16,
+                usePointStyle: true,
+                pointStyleWidth: 12,
+                font: { size: 13, weight: '500' }
+              }
+            }
+          }
+        }
+      });
+
+      // Bar Chart — Study Time
+      const bCtx = document.getElementById('bar-chart').getContext('2d');
+      if (barChart) barChart.destroy();
+      barChart = new Chart(bCtx, {
+        type: 'bar',
+        data: {
+          labels: data.study_data.map(d => d.date),
+          datasets: [{
+            label: 'Minutes',
+            data: data.study_data.map(d => d.minutes),
+            backgroundColor: chartColors.cyan + '40',
+            borderColor: chartColors.cyan,
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { font: { size: 11 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Line Chart — Completions
+      const lCtx = document.getElementById('line-chart').getContext('2d');
+      if (lineChart) lineChart.destroy();
+      lineChart = new Chart(lCtx, {
+        type: 'line',
+        data: {
+          labels: data.completion_data.map(d => d.date),
+          datasets: [{
+            label: 'Tasks Done',
+            data: data.completion_data.map(d => d.count),
+            borderColor: chartColors.violet,
+            backgroundColor: chartColors.violet + '20',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: chartColors.violet,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { stepSize: 1, font: { size: 11 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Punishments
+      const pList = document.getElementById('punishment-list');
+      if (data.punishments && data.punishments.length > 0) {
+        pList.innerHTML = data.punishments.map(p => `
+          <div class="punishment-item">
+            <span class="p-task">📋 ${p.title}</span>
+            <span class="p-text">${p.punishment}</span>
+          </div>
+        `).join('');
+      }
+
+    } catch (err) {
+      console.error('Dashboard load error:', err);
+    }
+  }
+
+  // Responsive chart legend
+  window.addEventListener('resize', () => {
+    if (doughnutChart) {
+      doughnutChart.options.plugins.legend.position = window.innerWidth < 768 ? 'bottom' : 'right';
+      doughnutChart.update();
+    }
+  });
+
+  loadDashboard();
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+Designing the architecture for **PeakPulse** (your solo-journey productivity app) requires a system that is both technically robust for data tracking and flexible enough to handle "funny" rewards and punishments.
+
+Since you are already exploring **Python, SQL, and Web Development**, this architecture is designed to leverage those skills while keeping the "Empathy-Driven" core we discussed previously.
+
+---
+
+## **1. The Full Architecture: "The Peak Engine"**
+
+The system follows a **Three-Tier Architecture** with a focus on real-time feedback and behavioral logic.
+
+### **A. Frontend (The "Interface of Action")**
+* **Framework:** **Next.js 14** or **Flutter**. This allows for a smooth, app-like experience with fast transitions.
+* **The Gradient Grid (D3.js):** Instead of a standard calendar, you'll use a custom SVG-based heatmap. It visualizes your consistency across subjects using color intensity.
+* **The Vibe-Check Module:** A simple UI component that captures your mood before and after a study session using emojis or text.
+
+### **B. Backend (The "Logic & Punishment Center")**
+* **API Layer:** **FastAPI (Python)**. It's high-performance and perfect for handling your logic.
+* **The Scheduler (Celery + Redis):** This is the "brain" that tracks your one-month exam timeline. If a task isn't marked "Done" by its deadline, it triggers the **Punishment Logic**.
+* **Sentiment Microservice:** A small Python script using a library like `TextBlob` or `VADER` to analyze your journal entries and adjust the "Motivational Tone" of the app.
+
+### **C. Data Layer (The "Knowledge Vault")**
+* **PostgreSQL:** Your primary relational database. It stores:
+    * **Subjects & Chapters:** Hierarchical data for your exams.
+    * **The Audit Log:** A record of every task completed (or missed).
+* **Redis:** Stores "Ephemeral State"—like your current study timer or your active reward streak.
+
+---
+
+## **2. System Workflow Diagram**
+
+
+1.  **Input:** You set an exam date (e.g., May 15th).
+2.  **Decomposition:** The backend breaks subjects into daily chapter "Quests."
+3.  **Monitoring:** As you work, the **Timer** sends heartbeats to the server.
+4.  **Evaluation:**
+    * **Success:** Triggers the "Reward Engine" (New badge, funny meme).
+    * **Failure:** Triggers the "Punishment Engine" (App-icon change, "Nag" notifications).
+
+---
+
+## **3. Future Update Roadmap (The "Peak" Vision)**
+
+Once the core version is stable, here is how we scale it to make it even more "Peak Level":
+
+### **Phase 2: Intelligent Adaptivity (The "AI Tutor" Era)**
+* **Smart Rescheduling:** If you consistently struggle with "Theory of Computation" but breeze through "SQL," the AI will automatically shift more time to the harder subject in your timeline.
+* **Voice Motivation:** Integration with Text-to-Speech so your "Drill Sergeant" or "Zen Master" can actually speak to you during study breaks.
+
+### **Phase 3: Integration & Ecosystem**
+* **IDE Integration:** A VS Code extension that automatically updates your "Skill Pillar" progress when you write Python code.
+* **External API Sync:** Syncing with your **Duolingo** streak and **LeetCode** profile so you don't have to manual-entry your skill development.
+
+### **Phase 4: Physical "Punishment" & Hardware**
+* **IoT Smart Bulb Integration:** If you miss a task, your room's smart bulb turns red. If you’re in "Focus Mode," it turns a deep, productive purple.
+* **Wearable Sync:** Tracking sleep and heart rate to tell you: *"Thilak, your stress is high. Skip the punishment this time and take a 20-minute nap. That is your new task."*
+
+---
+
+**Since you're already familiar with Python and SQL, which part of this architecture do you feel most excited to start building first—the database schema for the exams or the logic for the "Funny Punishments"?**
